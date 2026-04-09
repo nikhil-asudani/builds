@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automating the Operational</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #0f1a2e;
+    --navy-light: #1a2d4a;
+    --teal: #2dd4bf;
+    --teal-dim: rgba(45, 212, 191, 0.15);
+    --white: #f0f2f5;
+    --off-white: #e2e5ea;
+    --muted: #7a8599;
+    --red: #ef4444;
+    --green: #22c55e;
+    --green-dim: rgba(34, 197, 94, 0.12);
+    --text: #c8cdd6;
+    --bg: #0a0f1a;
+  }
+
+  html, body {
+    height: 100%; width: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Slide Container ─── */
+  .deck {
+    position: relative;
+    width: 100%; height: 100%;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateY(20px);
+    padding: 4vh 6vw;
+  }
+
+  .slide.active {
+    opacity: 1; pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .slide.exit-up {
+    opacity: 0; transform: translateY(-20px);
+  }
+
+  /* ─── Navigation ─── */
+  .nav {
+    position: fixed; bottom: 2.5vh; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: center;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none; cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .nav-dot.active {
+    background: var(--teal);
+    box-shadow: 0 0 12px rgba(45, 212, 191, 0.4);
+    width: 28px; border-radius: 5px;
+  }
+  .nav-dot:hover { background: rgba(255,255,255,0.3); }
+  .nav-dot.active:hover { background: var(--teal); }
+
+  .slide-counter {
+    position: fixed; bottom: 2.5vh; right: 4vw;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--muted);
+    z-index: 100; letter-spacing: 1px;
+  }
+
+  .key-hint {
+    position: fixed; bottom: 2.5vh; left: 4vw;
+    font-size: 0.7rem; color: rgba(255,255,255,0.2);
+    z-index: 100; letter-spacing: 0.5px;
+  }
+  .key-hint kbd {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 7px; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+  }
+
+  /* ─── SLIDE 1: Title ─── */
+  .s1-wrapper {
+    text-align: left; width: 100%; max-width: 900px;
+  }
+
+  .s1-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 3px;
+    color: var(--teal); text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s 0.2s ease forwards;
+  }
+
+  .s1-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s 0.4s ease forwards;
+  }
+
+  .s1-title em {
+    font-style: normal;
+    color: var(--teal);
+  }
+
+  .s1-meta {
+    display: flex; gap: 2rem; align-items: center;
+    font-size: 0.85rem; color: var(--muted);
+    opacity: 0;
+    animation: fadeSlideUp 0.6s 0.7s ease forwards;
+  }
+
+  .s1-meta span { display: flex; align-items: center; gap: 6px; }
+
+  .s1-line {
+    width: 60px; height: 2px; background: var(--teal);
+    opacity: 0;
+    animation: expandLine 0.8s 1s ease forwards;
+  }
+
+  /* ─── SLIDE 2: Before & After ─── */
+  .s2-wrapper {
+    width: 100%; max-width: 1100px;
+  }
+
+  .s2-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 3px;
+    color: var(--teal); text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .s2-columns {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .s2-col {
+    position: relative;
+  }
+
+  .s2-col-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 8px 0;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .s2-col-label.before { color: var(--muted); }
+  .s2-col-label.after { color: var(--green); }
+
+  .s2-arrow {
+    display: flex; align-items: center; justify-content: center;
+    padding-top: 3rem;
+    color: var(--teal); font-size: 1.5rem;
+  }
+
+  .s2-step {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 10px 0;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateX(-10px);
+  }
+
+  .slide.active .s2-step { opacity: 1; transform: translateX(0); }
+
+  .s2-num {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; font-weight: 500;
+    margin-top: 1px;
+  }
+
+  .before-col .s2-num {
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .after-col .s2-num {
+    background: var(--green-dim);
+    color: var(--green);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .s2-text {
+    font-size: 0.9rem; line-height: 1.5;
+    color: var(--text);
+  }
+
+  .s2-repeat {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+    margin-top: 6px;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+  }
+
+  .s2-repeat-icon {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .s2-repeat-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 2px;
+  }
+
+  .s2-repeat.red .s2-repeat-icon,
+  .s2-repeat.red .s2-repeat-text { color: var(--red); }
+  .s2-repeat.green .s2-repeat-icon,
+  .s2-repeat.green .s2-repeat-text { color: var(--green); }
+
+  .s2-footnote {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  /* ─── SLIDE 3: Impact ─── */
+  .s3-wrapper {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .s3-bg-ghost {
+    position: absolute; inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0.04;
+    pointer-events: none;
+    font-size: 0.65rem;
+    color: var(--white);
+    line-height: 2.2;
+    white-space: pre-line;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .s3-headline {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 0.5rem;
+    position: relative; z-index: 2;
+  }
+
+  .s3-headline .pct { color: var(--teal); }
+
+  .s3-subline {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: var(--teal);
+    margin-bottom: 2.5rem;
+    position: relative; z-index: 2;
+    opacity: 0.85;
+  }
+
+  .s3-numbers {
+    display: flex; align-items: center; gap: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--muted);
+    position: relative; z-index: 2;
+  }
+
+  .s3-numbers .old {
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    opacity: 0.5;
+  }
+
+  .s3-numbers .arrow-r { color: var(--teal); font-size: 1.2rem; }
+
+  .s3-numbers .new {
+    color: var(--green);
+    font-weight: 600;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  }
+
+  /* glow ring behind headline */
+  .s3-glow {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ─── SLIDE 4: Benefits & Possibilities ─── */
+  .s4-wrapper {
+    width: 100%; max-width: 1100px;
+  }
+
+  .s4-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 3px;
+    color: var(--teal); text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .s4-benefits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 2.5rem;
+  }
+
+  .s4-benefit-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .slide.active .s4-benefit-card {
+    opacity: 1; transform: translateY(0);
+  }
+
+  .s4-benefit-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--teal);
+    transform: translateY(-4px);
+  }
+
+  .s4-benefit-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .s4-benefit-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  .s4-terms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .s4-term-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+  }
+
+  .slide.active .s4-term-box { opacity: 1; transform: translateY(0); }
+
+  .s4-term-header {
+    padding: 10px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .s4-term-header.short {
+    background: var(--navy-light);
+    color: var(--teal);
+  }
+
+  .s4-term-header.long {
+    background: rgba(45, 212, 191, 0.1);
+    color: var(--teal);
+  }
+
+  .s4-term-list {
+    padding: 1.2rem 1.5rem;
+    list-style: none;
+  }
+
+  .s4-term-list li {
+    position: relative;
+    padding: 8px 0 8px 18px;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .s4-term-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 15px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    opacity: 0.5;
+  }
+
+  /* ─── Animations ─── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes expandLine {
+    from { width: 0; opacity: 0; }
+    to { width: 60px; opacity: 1; }
+  }
+
+  /* ─── Stagger delays ─── */
+  .slide.active .s2-step:nth-child(1) { transition-delay: 0.1s; }
+  .slide.active .s2-step:nth-child(2) { transition-delay: 0.15s; }
+  .slide.active .s2-step:nth-child(3) { transition-delay: 0.2s; }
+  .slide.active .s2-step:nth-child(4) { transition-delay: 0.25s; }
+  .slide.active .s2-step:nth-child(5) { transition-delay: 0.3s; }
+  .slide.active .s2-step:nth-child(6) { transition-delay: 0.35s; }
+  .slide.active .s2-step:nth-child(7) { transition-delay: 0.4s; }
+
+  .slide.active .s4-benefit-card:nth-child(1) { transition-delay: 0.1s; }
+  .slide.active .s4-benefit-card:nth-child(2) { transition-delay: 0.2s; }
+  .slide.active .s4-benefit-card:nth-child(3) { transition-delay: 0.3s; }
+  .slide.active .s4-benefit-card:nth-child(4) { transition-delay: 0.4s; }
+
+  .slide.active .s4-term-box:nth-child(1) { transition-delay: 0.5s; }
+  .slide.active .s4-term-box:nth-child(2) { transition-delay: 0.6s; }
+
+  /* ─── Branding ─── */
+  .brand {
+    position: fixed; top: 2.5vh; right: 4vw;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 0.85rem;
+    color: rgba(255,255,255,0.12);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    z-index: 100;
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed; top: 0; left: 0;
+    height: 2px;
+    background: var(--teal);
+    transition: width 0.5s ease;
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="brand">Acadia</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="key-hint"><kbd>←</kbd> <kbd>→</kbd> to navigate</div>
+
+<div class="deck">
+
+  <!-- ═══ SLIDE 1: Title ═══ -->
+  <div class="slide active" data-slide="0">
+    <div class="s1-wrapper">
+      <div class="s1-label">Bealls Reporting Automation</div>
+      <h1 class="s1-title">Automating<br>the <em>Operational</em></h1>
+      <div class="s1-line"></div>
+      <div class="s1-meta">
+        <span>Nikhil · Acadia Digital Solutions</span>
+        <span>April 11, 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 2: The Reporting Cycle ═══ -->
+  <div class="slide" data-slide="1">
+    <div class="s2-wrapper">
+      <div class="s2-header">The Reporting Cycle</div>
+      <div class="s2-columns">
+
+        <!-- BEFORE -->
+        <div class="s2-col before-col">
+          <div class="s2-col-label before">Before</div>
+          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Modify & run Snowflake query</div></div>
+          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Pull data and paste into Excel</div></div>
+          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text">Make manual changes (week number, dates, etc.) and refresh</div></div>
+          <div class="s2-step"><div class="s2-num">4</div><div class="s2-text">Prepare charts for email</div></div>
+          <div class="s2-step"><div class="s2-num">5</div><div class="s2-text">Email preparation with callouts + charts</div></div>
+          <div class="s2-step"><div class="s2-num">6</div><div class="s2-text">QA</div></div>
+          <div class="s2-repeat red">
+            <div class="s2-repeat-icon">↻</div>
+            <div class="s2-repeat-text">REPEAT</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="s2-arrow">→</div>
+
+        <!-- AFTER -->
+        <div class="s2-col after-col">
+          <div class="s2-col-label after">After</div>
+          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Select report on Bealls Reporting Portal</div></div>
+          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Run and download the report</div></div>
+          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text">Use automated email for callouts & charts</div></div>
+          <div class="s2-step"><div class="s2-num">4</div><div class="s2-text">QA</div></div>
+          <div class="s2-repeat green">
+            <div class="s2-repeat-icon">↻</div>
+            <div class="s2-repeat-text">REPEAT</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="s2-footnote">This covers only the operational workflow. Time spent on QA and analysis remains consistent and is not included.</div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: Impact ═══ -->
+  <div class="slide" data-slide="2">
+    <div class="s3-wrapper">
+      <div class="s3-glow"></div>
+      <div class="s3-bg-ghost">
+1  Modify & run Snowflake query
+2  Pull data and paste into Excel
+3  Make manual changes and refresh
+4  Prepare charts for email
+5  Email preparation with callouts + charts
+6  QA
+
+1  Select report on Portal
+2  Run and download
+3  Use automated email
+4  QA
+      </div>
+      <div class="s3-headline"><span class="pct">80%</span> Less Time</div>
+      <div class="s3-subline">100% Consistent</div>
+      <div class="s3-numbers">
+        <span class="old">~5 hrs/month</span>
+        <span class="arrow-r">→</span>
+        <span class="new">~1 hr/month</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: Benefits & Possibilities ═══ -->
+  <div class="slide" data-slide="3">
+    <div class="s4-wrapper">
+      <div class="s4-header">Benefits & Possibilities</div>
+
+      <div class="s4-benefits">
+        <div class="s4-benefit-card">
+          <span class="s4-benefit-icon">⚡</span>
+          <div class="s4-benefit-label">Faster<br>Turnaround</div>
+        </div>
+        <div class="s4-benefit-card">
+          <span class="s4-benefit-icon">🛡</span>
+          <div class="s4-benefit-label">Consistency</div>
+        </div>
+        <div class="s4-benefit-card">
+          <span class="s4-benefit-icon">📊</span>
+          <div class="s4-benefit-label">Less<br>Dependency</div>
+        </div>
+        <div class="s4-benefit-card">
+          <span class="s4-benefit-icon">🚀</span>
+          <div class="s4-benefit-label">More Time<br>for Analysis</div>
+        </div>
+      </div>
+
+      <div class="s4-terms">
+        <div class="s4-term-box">
+          <div class="s4-term-header short">Short-Term</div>
+          <ul class="s4-term-list">
+            <li>Extend to any client, add any report, self-serve for any analyst</li>
+            <li>Scheduled auto-runs</li>
+            <li>Automated QC checks</li>
+          </ul>
+        </div>
+        <div class="s4-term-box">
+          <div class="s4-term-header long">Long-Term</div>
+          <ul class="s4-term-list">
+            <li>Automated analysis layer</li>
+            <li>End-to-end pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  // Build nav dots
+  const nav = document.getElementById('nav');
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    nav.appendChild(dot);
+  }
+
+  function updateUI() {
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+    document.getElementById('progress').style.width = `${((current + 1) / total) * 100}%`;
+  }
+
+  function goTo(index) {
+    if (index === current || index < 0 || index >= total) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit-up');
+    setTimeout(() => slides[current].classList.remove('exit-up'), 600);
+    current = index;
+    slides[current].classList.add('active');
+    updateUI();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goTo(current - 1);
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    }
+  });
+
+  updateUI();
+</script>
+</body>
+</html>
