@@ -44,18 +44,12 @@
     justify-content: center; align-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    transform: translateY(20px);
+    transition: opacity 0.5s ease;
     padding: 4vh 6vw;
   }
 
   .slide.active {
     opacity: 1; pointer-events: auto;
-    transform: translateY(0);
-  }
-
-  .slide.exit-up {
-    opacity: 0; transform: translateY(-20px);
   }
 
   /* ─── Navigation ─── */
@@ -100,6 +94,36 @@
     font-size: 0.65rem;
   }
 
+  /* ─── SLIDE 0: Blank Opening ─── */
+  .s0-wrapper {
+    text-align: center;
+    width: 100%; max-width: 900px;
+  }
+
+  .s0-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .s0-role {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .s0-team {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--teal);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+  }
+
   /* ─── SLIDE 1: Title ─── */
   .s1-wrapper {
     text-align: left; width: 100%; max-width: 900px;
@@ -107,21 +131,17 @@
 
   .s1-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem; letter-spacing: 3px;
-    color: var(--teal); text-transform: uppercase;
+    font-size: 1rem; letter-spacing: 4px;
+    text-transform: uppercase;
     margin-bottom: 2rem;
-    opacity: 0;
-    animation: fadeSlideUp 0.6s 0.2s ease forwards;
   }
 
   .s1-title {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-size: clamp(2rem, 7vw, 4rem);
     color: var(--white);
-    line-height: 1.1;
+    line-height: 1.2;
     margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeSlideUp 0.8s 0.4s ease forwards;
   }
 
   .s1-title em {
@@ -130,18 +150,15 @@
   }
 
   .s1-meta {
-    display: flex; gap: 2rem; align-items: center;
-    font-size: 0.85rem; color: var(--muted);
-    opacity: 0;
-    animation: fadeSlideUp 0.6s 0.7s ease forwards;
+    display: flex; gap: 20rem; align-items: center;
+    font-size: 1.85rem; color: var(--muted);
   }
 
   .s1-meta span { display: flex; align-items: center; gap: 6px; }
 
   .s1-line {
-    width: 60px; height: 2px; background: var(--teal);
-    opacity: 0;
-    animation: expandLine 0.8s 1s ease forwards;
+    width: 60px; height: 5px; background: var(--teal);
+    margin-bottom: 1rem;
   }
 
   /* ─── SLIDE 2: Before & After ─── */
@@ -151,16 +168,16 @@
 
   .s2-header {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem; letter-spacing: 3px;
+    font-size: 2.5rem; letter-spacing: 2px;
     color: var(--teal); text-transform: uppercase;
-    margin-bottom: 2.5rem;
-    text-align: center;
+    margin-bottom: 2rem;
+    text-align: left;
   }
 
   .s2-columns {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
     align-items: start;
   }
 
@@ -170,31 +187,20 @@
 
   .s2-col-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem; letter-spacing: 3px;
+    font-size: 2rem; letter-spacing: 2px;
     text-transform: uppercase;
     padding: 8px 0;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   .s2-col-label.before { color: var(--muted); }
   .s2-col-label.after { color: var(--green); }
 
-  .s2-arrow {
-    display: flex; align-items: center; justify-content: center;
-    padding-top: 3rem;
-    color: var(--teal); font-size: 1.5rem;
-  }
-
   .s2-step {
     display: flex; align-items: flex-start; gap: 14px;
-    padding: 10px 0;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    transform: translateX(-10px);
+    padding: 6px 0;
   }
-
-  .slide.active .s2-step { opacity: 1; transform: translateX(0); }
 
   .s2-num {
     flex-shrink: 0;
@@ -202,8 +208,8 @@
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem; font-weight: 500;
-    margin-top: 1px;
+    font-size: 0.65rem; font-weight: 100;
+    margin-top: 0px;
   }
 
   .before-col .s2-num {
@@ -219,7 +225,7 @@
   }
 
   .s2-text {
-    font-size: 0.9rem; line-height: 1.5;
+    font-size: 1.1rem; line-height: 1.4;
     color: var(--text);
   }
 
@@ -233,12 +239,12 @@
   .s2-repeat-icon {
     width: 24px; height: 24px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem;
+    font-size: 2rem;
   }
 
   .s2-repeat-text {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem; font-weight: 600;
+    font-size: 2rem; font-weight: 600;
     letter-spacing: 2px;
   }
 
@@ -248,12 +254,12 @@
   .s2-repeat.green .s2-repeat-text { color: var(--green); }
 
   .s2-footnote {
-    text-align: center;
+    text-align: left;
     margin-top: 2.5rem;
-    font-size: 0.72rem;
+    font-size: 1rem;
     color: var(--muted);
     font-style: italic;
-    opacity: 0.6;
+    opacity: 0.7;
   }
 
   /* ─── SLIDE 3: Impact ─── */
@@ -265,7 +271,7 @@
     align-items: center; justify-content: center;
   }
 
-  .s3-bg-ghost {
+  /* .s3-bg-ghost {
     position: absolute; inset: 0;
     display: flex; justify-content: center; align-items: center;
     opacity: 0.04;
@@ -276,54 +282,48 @@
     white-space: pre-line;
     text-align: left;
     font-family: 'DM Sans', sans-serif;
-  }
+  } */
 
   .s3-headline {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(3rem, 8vw, 6rem);
+    font-size: clamp(4rem, 8vw, 4rem);
     color: var(--white);
-    line-height: 1.05;
-    margin-bottom: 0.5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
     position: relative; z-index: 2;
   }
 
   .s3-headline .pct { color: var(--teal); }
 
-  .s3-subline {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.5rem, 4vw, 2.8rem);
-    color: var(--teal);
-    margin-bottom: 2.5rem;
-    position: relative; z-index: 2;
-    opacity: 0.85;
-  }
-
   .s3-numbers {
     display: flex; align-items: center; gap: 1.5rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(1rem, 2vw, 1.4rem);
-    color: var(--muted);
+    font-size: clamp(2.5rem, 2.5vw, 2.5rem);
+    color: var(--red);
     position: relative; z-index: 2;
+    margin-top: 1rem;
   }
 
   .s3-numbers .old {
-    text-decoration: line-through;
-    text-decoration-color: var(--red);
-    opacity: 0.5;
+    font-family: 'JetBrains Mono', monospace;
+    /* text-decoration: line-through; */
+    text-decoration-color: var(--off-white);
+    text-decoration-thickness: 3px;
+    opacity: 0.7;
   }
 
-  .s3-numbers .arrow-r { color: var(--teal); font-size: 1.2rem; }
+  .s3-numbers .arrow-r { color: var(--white); font-size: 4rem; }
 
   .s3-numbers .new {
     color: var(--green);
-    font-weight: 600;
-    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+    font-size: clamp(2.3rem, 2.3vw, 2.3rem);
   }
 
-  /* glow ring behind headline */
   .s3-glow {
     position: absolute;
-    width: 400px; height: 400px;
+    width: 800px; height: 800px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%);
     top: 50%; left: 50%;
@@ -332,39 +332,32 @@
     pointer-events: none;
   }
 
-  /* ─── SLIDE 4: Benefits & Possibilities ─── */
+  /* ─── SLIDE 4: Benefits & Possibilities (split) ─── */
   .s4-wrapper {
     width: 100%; max-width: 1100px;
   }
 
-  .s4-header {
+  .s4-section-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem; letter-spacing: 3px;
+    font-size: 2.5rem; letter-spacing: 3px;
     color: var(--teal); text-transform: uppercase;
-    margin-bottom: 2.5rem;
-    text-align: center;
+    margin-bottom: 1.2rem;
   }
 
   .s4-benefits {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1rem;
   }
 
   .s4-benefit-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 1.5rem 1rem;
     text-align: center;
     transition: all 0.3s ease;
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  .slide.active .s4-benefit-card {
-    opacity: 1; transform: translateY(0);
   }
 
   .s4-benefit-card:hover {
@@ -374,22 +367,28 @@
   }
 
   .s4-benefit-icon {
-    font-size: 1.6rem;
+    font-size: 2.0rem;
     margin-bottom: 0.8rem;
     display: block;
   }
 
   .s4-benefit-label {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: var(--white);
     line-height: 1.3;
   }
 
+  .s4-divider {
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 1rem;
+  }
+
   .s4-terms {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 30px;
   }
 
   .s4-term-box {
@@ -397,17 +396,12 @@
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px;
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s ease;
   }
-
-  .slide.active .s4-term-box { opacity: 1; transform: translateY(0); }
 
   .s4-term-header {
     padding: 10px 20px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-size: 1.2rem;
     letter-spacing: 3px;
     text-transform: uppercase;
     font-weight: 500;
@@ -431,7 +425,7 @@
   .s4-term-list li {
     position: relative;
     padding: 8px 0 8px 18px;
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: var(--text);
     line-height: 1.5;
   }
@@ -445,34 +439,6 @@
     background: var(--teal);
     opacity: 0.5;
   }
-
-  /* ─── Animations ─── */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes expandLine {
-    from { width: 0; opacity: 0; }
-    to { width: 60px; opacity: 1; }
-  }
-
-  /* ─── Stagger delays ─── */
-  .slide.active .s2-step:nth-child(1) { transition-delay: 0.1s; }
-  .slide.active .s2-step:nth-child(2) { transition-delay: 0.15s; }
-  .slide.active .s2-step:nth-child(3) { transition-delay: 0.2s; }
-  .slide.active .s2-step:nth-child(4) { transition-delay: 0.25s; }
-  .slide.active .s2-step:nth-child(5) { transition-delay: 0.3s; }
-  .slide.active .s2-step:nth-child(6) { transition-delay: 0.35s; }
-  .slide.active .s2-step:nth-child(7) { transition-delay: 0.4s; }
-
-  .slide.active .s4-benefit-card:nth-child(1) { transition-delay: 0.1s; }
-  .slide.active .s4-benefit-card:nth-child(2) { transition-delay: 0.2s; }
-  .slide.active .s4-benefit-card:nth-child(3) { transition-delay: 0.3s; }
-  .slide.active .s4-benefit-card:nth-child(4) { transition-delay: 0.4s; }
-
-  .slide.active .s4-term-box:nth-child(1) { transition-delay: 0.5s; }
-  .slide.active .s4-term-box:nth-child(2) { transition-delay: 0.6s; }
 
   /* ─── Branding ─── */
   .brand {
@@ -507,21 +473,32 @@
 
 <div class="deck">
 
-  <!-- ═══ SLIDE 1: Title ═══ -->
+  <!-- ═══ SLIDE 0: Blank Opening ═══ -->
   <div class="slide active" data-slide="0">
+    <div class="s0-wrapper">
+      <div class="s0-name"></div>
+      <div class="s0-role"></div>
+      <div class="s0-team"></div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 1: Title ═══ -->
+  <div class="slide" data-slide="1">
     <div class="s1-wrapper">
-      <div class="s1-label">Bealls Reporting Automation</div>
-      <h1 class="s1-title">Automating<br>the <em>Operational</em></h1>
+      <!-- <div class="s1-label">Bealls Reporting Automation</div> -->
+      <!-- <h1 class="s1-title">Automating<br>the <em>Operational</em></h1> -->
+      <h1 class="s1-title"><em>Driving Efficiency</em><br>in Reporting <br><em>through Automation</em></h1>
       <div class="s1-line"></div>
       <div class="s1-meta">
-        <span>Nikhil · Acadia Digital Solutions</span>
         <span>April 11, 2026</span>
       </div>
     </div>
   </div>
 
+  
+
   <!-- ═══ SLIDE 2: The Reporting Cycle ═══ -->
-  <div class="slide" data-slide="1">
+  <div class="slide" data-slide="2">
     <div class="s2-wrapper">
       <div class="s2-header">The Reporting Cycle</div>
       <div class="s2-columns">
@@ -529,28 +506,24 @@
         <!-- BEFORE -->
         <div class="s2-col before-col">
           <div class="s2-col-label before">Before</div>
-          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Modify & run Snowflake query</div></div>
-          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Pull data and paste into Excel</div></div>
-          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text">Make manual changes (week number, dates, etc.) and refresh</div></div>
-          <div class="s2-step"><div class="s2-num">4</div><div class="s2-text">Prepare charts for email</div></div>
-          <div class="s2-step"><div class="s2-num">5</div><div class="s2-text">Email preparation with callouts + charts</div></div>
-          <div class="s2-step"><div class="s2-num">6</div><div class="s2-text">QA</div></div>
+          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Modify & Run Snowflake Queries</div></div>
+          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Export / Paste Data to Excel</div></div>
+          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text">Perform Manual Updates (week num, annotations, etc.)</div></div>
+          <div class="s2-step"><div class="s2-num">4</div><div class="s2-text">Prepare Charts / Callouts for email</div></div>
+          <div class="s2-step"><div class="s2-num">5</div><div class="s2-text">Email Preparation</div></div>
+          <div class="s2-step"><div class="s2-num">6</div><div class="s2-text"><b>QA</b></div></div>
           <div class="s2-repeat red">
             <div class="s2-repeat-icon">↻</div>
             <div class="s2-repeat-text">REPEAT</div>
           </div>
         </div>
 
-        <!-- Arrow -->
-        <div class="s2-arrow">→</div>
-
         <!-- AFTER -->
         <div class="s2-col after-col">
           <div class="s2-col-label after">After</div>
-          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Select report on Bealls Reporting Portal</div></div>
-          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Run and download the report</div></div>
-          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text">Use automated email for callouts & charts</div></div>
-          <div class="s2-step"><div class="s2-num">4</div><div class="s2-text">QA</div></div>
+          <div class="s2-step"><div class="s2-num">1</div><div class="s2-text">Select, Run, & Download Report through Reporting Portal</div></div>
+          <div class="s2-step"><div class="s2-num">2</div><div class="s2-text">Use Automated Email for Callouts & Charts</div></div>
+          <div class="s2-step"><div class="s2-num">3</div><div class="s2-text"><b>QA</b></div></div>
           <div class="s2-repeat green">
             <div class="s2-repeat-icon">↻</div>
             <div class="s2-repeat-text">REPEAT</div>
@@ -558,41 +531,29 @@
         </div>
 
       </div>
-      <div class="s2-footnote">This covers only the operational workflow. Time spent on QA and analysis remains consistent and is not included.</div>
+      <div class="s2-footnote">Scope limited to Operational Workflow. QA and analysis effort remain unchanged.</div>
     </div>
   </div>
 
   <!-- ═══ SLIDE 3: Impact ═══ -->
-  <div class="slide" data-slide="2">
+  <div class="slide" data-slide="3">
     <div class="s3-wrapper">
       <div class="s3-glow"></div>
-      <div class="s3-bg-ghost">
-1  Modify & run Snowflake query
-2  Pull data and paste into Excel
-3  Make manual changes and refresh
-4  Prepare charts for email
-5  Email preparation with callouts + charts
-6  QA
-
-1  Select report on Portal
-2  Run and download
-3  Use automated email
-4  QA
-      </div>
-      <div class="s3-headline"><span class="pct">80%</span> Less Time</div>
-      <div class="s3-subline">100% Consistent</div>
-      <div class="s3-numbers">
-        <span class="old">~5 hrs/month</span>
-        <span class="arrow-r">→</span>
-        <span class="new">~1 hr/month</span>
-      </div>
+    </div>
+    <div class="s3-headline"><span class="pct">80%</span> Reduction in Reporting Effort</div>
+    <div class="s3-headline"><span class="pct">99%</span> Output Consistency</div>
+    <div class="s3-numbers">
+      <span class="old">5 hrs/month</span>
+      <span class="arrow-r">→</span>
+      <span class="new">1 hr/month</span>
     </div>
   </div>
 
   <!-- ═══ SLIDE 4: Benefits & Possibilities ═══ -->
-  <div class="slide" data-slide="3">
+  <div class="slide" data-slide="4">
     <div class="s4-wrapper">
-      <div class="s4-header">Benefits & Possibilities</div>
+
+      <div class="s4-section-label">Benefits</div>
 
       <div class="s4-benefits">
         <div class="s4-benefit-card">
@@ -601,11 +562,11 @@
         </div>
         <div class="s4-benefit-card">
           <span class="s4-benefit-icon">🛡</span>
-          <div class="s4-benefit-label">Consistency</div>
+          <div class="s4-benefit-label">Consistent<br>Output</div>
         </div>
         <div class="s4-benefit-card">
           <span class="s4-benefit-icon">📊</span>
-          <div class="s4-benefit-label">Less<br>Dependency</div>
+          <div class="s4-benefit-label">Reduced Manual<br>Dependency</div>
         </div>
         <div class="s4-benefit-card">
           <span class="s4-benefit-icon">🚀</span>
@@ -613,20 +574,23 @@
         </div>
       </div>
 
+      <div class="s4-divider"></div>
+
+      <div class="s4-section-label">Next Steps</div>
+
       <div class="s4-terms">
         <div class="s4-term-box">
           <div class="s4-term-header short">Short-Term</div>
           <ul class="s4-term-list">
-            <li>Extend to any client, add any report, self-serve for any analyst</li>
-            <li>Scheduled auto-runs</li>
-            <li>Automated QC checks</li>
+            <li>Scale across Analysts, Clients and Reports</li>
+            <li>Integrate QA Checks and Alerts</li>
           </ul>
         </div>
         <div class="s4-term-box">
           <div class="s4-term-header long">Long-Term</div>
           <ul class="s4-term-list">
-            <li>Automated analysis layer</li>
-            <li>End-to-end pipeline</li>
+            <li>Connect to an Insights and Analysis Layer</li>
+            <li>Automate Report Runs and Email Delivery</li>
           </ul>
         </div>
       </div>
@@ -661,10 +625,9 @@
   function goTo(index) {
     if (index === current || index < 0 || index >= total) return;
     slides[current].classList.remove('active');
-    slides[current].classList.add('exit-up');
-    setTimeout(() => slides[current].classList.remove('exit-up'), 600);
     current = index;
     slides[current].classList.add('active');
+    sessionStorage.setItem('currentSlide', current);
     updateUI();
   }
 
@@ -689,6 +652,16 @@
     }
   });
 
+  // Remember current slide across refreshes
+  const saved = sessionStorage.getItem('currentSlide');
+  if (saved !== null) {
+    const idx = parseInt(saved);
+    if (idx > 0 && idx < total) {
+      slides[0].classList.remove('active');
+      current = idx;
+      slides[current].classList.add('active');
+    }
+  }
   updateUI();
 </script>
 </body>
